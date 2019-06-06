@@ -36,6 +36,7 @@ public class Request {
 		byte[] datas = new byte[1024*1024*1024];
 		int len = is.read(datas);
 		requestInfo = new String(datas, 0, len);
+		System.out.println(requestInfo);
 		//分解字符串
 		parseRequestInfo();
 	}

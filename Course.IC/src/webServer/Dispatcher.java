@@ -52,7 +52,11 @@ public class Dispatcher implements Runnable {
 				value.append("?").append(queryStr);
 			}
 			insertedRes.add(value.toString());
-			printReg();
+			printReg(301);
+		}
+		else if(requestUrl.equals("regis.html")) {
+			insertedRes.add("Location:http://p.nju.edu.cn/");
+			printReg(302);
 		}
 		else if(requestUrl.equals("register.html")) {
 			printRegister();
@@ -100,13 +104,13 @@ public class Dispatcher implements Runnable {
 		}
 	}
 	
-	private void printReg() {
+	private void printReg(int code) {
 		try {
 			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("301Redirect.html");
 			byte[] datas = new byte[1024*1024];
 			int len = is.read(datas);
 			response.print((new String(datas, 0, len)));
-			response.pushToBrowser(301, insertedRes);
+			response.pushToBrowser(code, insertedRes);
 			is.close();
 		}
 		catch (IOException e) {

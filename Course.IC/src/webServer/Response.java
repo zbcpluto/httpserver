@@ -87,7 +87,9 @@ public class Response {
 				break;
 			case 301:
 				headInfo.append("Moved Permanently").append(CRLF);
-				headInfo.append("Location:").append("http://www.baidu.com/").append(CRLF);
+				break;
+			case 302:
+				headInfo.append("Moved Temporarily").append(CRLF);
 				break;
 			case 404:
 				headInfo.append("NOT FOUND").append(CRLF);
