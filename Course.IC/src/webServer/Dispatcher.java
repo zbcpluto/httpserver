@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,6 +64,12 @@ public class Dispatcher implements Runnable {
 		else if(requestUrl.equals("register.html")) {
 			printRegister();
 		}
+		else if(requestUrl.equals("aa.txt")) {
+			printTxt();
+		}
+		else if(requestUrl.equals("bb.jpg")) {
+			printJpg();
+		}
 		else {
 			printError(404);
 		}	
@@ -68,13 +77,22 @@ public class Dispatcher implements Runnable {
 		release();
 	}
 	
+	//测试状态码200和304
 	private void printIndex() {
 		try {
 			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("index.html");
 			byte[] datas = new byte[1024*1024];
 			int len = is.read(datas);
 			response.print((new String(datas, 0, len)));
-			response.pushToBrowser(200);
+			Date date = request.getLastModifiedTime();
+			if(date != null && new Date().getTime() - date.getTime() < 60000){
+				System.out.println("缓存有效");
+				response.pushToBrowser(304);
+			}
+			else{
+				response.pushToBrowser(200);
+			}
+
 			is.close();
 		}
 		catch (IOException e) {
@@ -138,6 +156,40 @@ public class Dispatcher implements Runnable {
 			e.printStackTrace();
 			printServerError();
 		}
+	}
+	
+	private void printTxt() {
+		try {
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("aa.txt");
+			byte[] datas = new byte[1024*1024];
+			int len = is.read(datas);
+			response.print((new String(datas, 0, len)));
+			response.pushToBrowser(200);
+			is.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			printServerError();
+		}
+	}
+	
+	private void printJpg() {
+		try {
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("bb.jpg");
+			byte[] datas = new byte[1024*1024*10];
+			int len = is.read(datas);
+			Encoder encoder = Base64.getEncoder();
+			response.print("<img src=\"data:image/jpg;base64,");
+			response.print(encoder.encodeToString(datas));
+			response.print("\"/>");
+			response.pushToBrowser(200);
+			is.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			printServerError();
+		}
+		
 	}
 	
 	private void printError(int code) {

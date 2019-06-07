@@ -84,6 +84,7 @@ public class Response {
 		switch(code) {
 			case 200:
 				headInfo.append("OK").append(CRLF);
+				headInfo.append("Last-Modified:").append(new Date()).append(CRLF);
 				break;
 			case 301:
 				headInfo.append("Moved Permanently").append(CRLF);
@@ -91,14 +92,18 @@ public class Response {
 			case 302:
 				headInfo.append("Moved Temporarily").append(CRLF);
 				break;
+			case 304:
+				headInfo.append("Not Modified").append(CRLF);
+				headInfo.append("Last-Modified:").append(new Date()).append(CRLF);
+				break;
 			case 404:
-				headInfo.append("NOT FOUND").append(CRLF);
+				headInfo.append("Not Found").append(CRLF);
 				break;
 			case 405:
-				headInfo.append("METHOD NOT ALLOWED").append(CRLF);
+				headInfo.append("Method Not Allowed").append(CRLF);
 				break;
 			case 500:
-				headInfo.append("SERVER ERROR").append(CRLF);
+				headInfo.append("Sever Error").append(CRLF);
 				break;
 		}
 		//2、响应头(最后一行存在空行):
@@ -129,4 +134,5 @@ public class Response {
 		sb.append(headInfo).append(content);
 		return sb.toString();
 	}
+	
 }

@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,8 @@ public class Request {
 	//换行符
 	private final String CRLF = "\r\n";
 	
+	private HashMap<String,String> months;
+	
 	public Request(Socket client) throws IOException {
 		InputStream is = client.getInputStream();
 		parameterMap = new HashMap<String, List<String>>();
@@ -39,6 +43,14 @@ public class Request {
 		System.out.println(requestInfo);
 		//分解字符串
 		parseRequestInfo();
+		
+		months = new HashMap<>();
+		String[] month1 = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+		String[] month2 = {"01","02","03","04","05","06","07","08","09","10","11","12"};
+		for (int i = 0; i < 12; i++){
+			months.put(month1[i], month2[i]);
+		}
+
 	}
 	
 	//分解字符串
@@ -141,6 +153,21 @@ public class Request {
 	
 	public String getQueryStr() {
 		return queryStr;
+	}
+	
+	public Date getLastModifiedTime(){
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			String[] toParse = requestInfo.substring(requestInfo.indexOf("If-Modified-Since: ")+"If-Modified-Since: ".length(),
+					requestInfo.indexOf("2019")+"2019".length()).split(" ");
+			StringBuilder dateString = new StringBuilder();
+			dateString.append(toParse[5]).append("-").append(months.get(toParse[1])).append("-").append(toParse[2]).append(" ").append(toParse[3]);
+			Date date=simpleDateFormat.parse(dateString.toString());
+			return date;
+		}
+		catch (Exception e){
+			return null;
+		}
 	}
 	
 }
