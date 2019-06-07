@@ -37,7 +37,7 @@ public class Request {
 	public Request(Socket client) throws IOException {
 		InputStream is = client.getInputStream();
 		parameterMap = new HashMap<String, List<String>>();
-		byte[] datas = new byte[1024*1024*1024];
+		byte[] datas = new byte[1024*1024];
 		int len = is.read(datas);
 		requestInfo = new String(datas, 0, len);
 		System.out.println(requestInfo);

@@ -124,7 +124,7 @@ public class Dispatcher implements Runnable {
 	
 	private void printReg(int code) {
 		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("301Redirect.html");
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(code+"Redirect.html");
 			byte[] datas = new byte[1024*1024];
 			int len = is.read(datas);
 			response.print((new String(datas, 0, len)));
